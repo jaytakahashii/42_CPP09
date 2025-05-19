@@ -9,6 +9,7 @@ jobs:
       matrix:
         path:
           - "ex00/src"
+          - "ex00/include"
 
     steps:
       - name: Checkout code
