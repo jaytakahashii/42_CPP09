@@ -1,19 +1,20 @@
 #include <iostream>
-#include <string>
 
-#include "BitcoinRate.hpp"
-#include "color.hpp"
-
-static bool isValidFileName(const std::string fileName) {
-}
+#include "BitcoinValue.hpp"
 
 int main(int argc, char** argv) {
   if (argc != 2) {
-    std::cerr << RED "Error: could not open file." RESET << std::endl;
-    return EXIT_FAILURE;
+    std::cerr << "Error: could not open file." << std::endl;
+    return 1;
   }
 
-  std::string inputFile = argv[1];
+  try {
+    BitcoinValue processor(argv[1], "../data/data.csv");
+    processor.processAndPrint();
+  } catch (std::exception& e) {
+    std::cerr << "Error: " << e.what() << std::endl;
+    return 1;
+  }
 
   return 0;
 }
