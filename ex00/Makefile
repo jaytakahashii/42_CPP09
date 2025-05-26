@@ -1,6 +1,6 @@
 MAKEFILE 		= Makefile
 
-NAME				= Sample
+NAME				= btc
 
 SRC_DIR			= src/
 OBJ_DIR			= .obj/
