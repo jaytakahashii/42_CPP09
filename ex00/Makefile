@@ -8,7 +8,7 @@ OBJ_DIR			= .obj/
 INCLUDE_DIR	= include/
 INCLUDE			= -I $(INCLUDE_DIR)
 HEADERS			= color.hpp \
-							BitcoinExchange.hpp \
+							BitcoinRate.hpp \
 HEADER			= $(addprefix $(INCLUDE_DIR), $(HEADERS))
 
 DEPS				= $(HEADER) $(MAKEFILE)
@@ -22,7 +22,7 @@ RM					= rm -rf
 
 SRC_DIR			= src/
 SRC_FILES		=	main.cpp \
-							BitcoinExchange.cpp \
+							BitcoinRate.cpp \
 
 SRCS				= $(addprefix $(SRC_DIR), $(SRC_FILES))
 OBJS				= $(addprefix $(OBJ_DIR), $(SRC_FILES:.cpp=.o))

@@ -1,7 +1,7 @@
 #include <iostream>
 #include <string>
 
-#include "BitcoinExchange.hpp"
+#include "BitcoinRate.hpp"
 #include "color.hpp"
 
 static bool isValidFileName(const std::string fileName) {
