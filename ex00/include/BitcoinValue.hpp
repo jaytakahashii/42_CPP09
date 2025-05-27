@@ -15,12 +15,26 @@ class BitcoinValue {
   std::vector<BitcoinData> _inputData;
   BitcoinRate _rateDB;
 
-  bool parseLine(const std::string& line, BitcoinData& data);
-  bool isValidDate(const std::string& date) const;
-  bool isValidValue(const std::string& valueStr, float& value) const;
+  // === Private Methods ===
+
+  bool _parseLine(const std::string& line, BitcoinData& data);
+  bool _isValidDate(const std::string& date) const;
+  bool _isValidValue(const std::string& valueStr, float& value) const;
+
+  // === Delete Methods ===
+  BitcoinValue();
 
  public:
-  BitcoinValue(const std::string& inputFile, const std::string& rateFile);
+  // === OCF ===
+
+  BitcoinValue(const BitcoinValue& other);
+  BitcoinValue& operator=(const BitcoinValue& other);
   ~BitcoinValue();
+
+  // === Constructor ===
+  BitcoinValue(const std::string& inputFile, const std::string& rateFile);
+
+  // === Methods ===
+
   void processAndPrint() const;
 };

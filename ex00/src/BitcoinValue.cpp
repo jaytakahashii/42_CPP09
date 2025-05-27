@@ -7,6 +7,25 @@
 #include <limits>
 #include <sstream>
 
+// === OCF ===
+
+BitcoinValue::BitcoinValue(const BitcoinValue& other)
+    : _inputData(other._inputData), _rateDB(other._rateDB) {
+}
+
+BitcoinValue& BitcoinValue::operator=(const BitcoinValue& other) {
+  if (this != &other) {
+    _inputData = other._inputData;
+    _rateDB = other._rateDB;
+  }
+  return *this;
+}
+
+BitcoinValue::~BitcoinValue() {
+  // No dynamic memory to free, but destructor is needed for OCF
+}
+
+// === Constructor ===
 BitcoinValue::BitcoinValue(const std::string& inputFile,
                            const std::string& rateFile)
     : _rateDB(rateFile) {
@@ -20,15 +39,13 @@ BitcoinValue::BitcoinValue(const std::string& inputFile,
 
   while (std::getline(file, line)) {
     BitcoinData data;
-    if (parseLine(line, data)) {
+    if (_parseLine(line, data)) {
       _inputData.push_back(data);
     }
   }
 }
 
-BitcoinValue::~BitcoinValue() {
-  // No dynamic memory to free, but destructor is needed for OCF
-}
+// === Method ===
 
 void BitcoinValue::processAndPrint() const {
   for (std::vector<BitcoinData>::const_iterator it = _inputData.begin();
@@ -44,7 +61,9 @@ void BitcoinValue::processAndPrint() const {
   }
 }
 
-bool BitcoinValue::parseLine(const std::string& line, BitcoinData& data) {
+// === Private Method ===
+
+bool BitcoinValue::_parseLine(const std::string& line, BitcoinData& data) {
   std::istringstream iss(line);
   std::string datePart, valuePart;
 
@@ -65,12 +84,12 @@ bool BitcoinValue::parseLine(const std::string& line, BitcoinData& data) {
   valuePart.erase(valuePart.find_last_not_of(" \t") + 1);
 
   float value;
-  if (!isValidDate(datePart)) {
+  if (!_isValidDate(datePart)) {
     std::cerr << "Error: bad input => " << line << std::endl;
     return false;
   }
 
-  if (!isValidValue(valuePart, value)) {
+  if (!_isValidValue(valuePart, value)) {
     return false;
   }
 
@@ -79,7 +98,7 @@ bool BitcoinValue::parseLine(const std::string& line, BitcoinData& data) {
   return true;
 }
 
-bool BitcoinValue::isValidDate(const std::string& date) const {
+bool BitcoinValue::_isValidDate(const std::string& date) const {
   if (date.length() != 10 || date[4] != '-' || date[7] != '-')
     return false;
 
@@ -99,8 +118,8 @@ bool BitcoinValue::isValidDate(const std::string& date) const {
   return true;
 }
 
-bool BitcoinValue::isValidValue(const std::string& valueStr,
-                                float& value) const {
+bool BitcoinValue::_isValidValue(const std::string& valueStr,
+                                 float& value) const {
   std::istringstream iss(valueStr);
   if (!(iss >> value)) {
     std::cerr << "Error: bad input => " << valueStr << std::endl;
