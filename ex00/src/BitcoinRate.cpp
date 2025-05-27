@@ -45,14 +45,6 @@ BitcoinRate::BitcoinRate(const std::string& filename) {
   }
 }
 
-float BitcoinRate::getRateForDate(const std::string& date) const {
-  std::map<std::string, float>::const_iterator it = _rateMap.find(date);
-  if (it != _rateMap.end()) {
-    return it->second;
-  }
-  throw std::runtime_error("no rate found for date: " + date);
-}
-
 bool BitcoinRate::hasClosestRate(const std::string& date, float& rate) const {
   std::map<std::string, float>::const_iterator it = _rateMap.lower_bound(date);
   if (it != _rateMap.end() && it->first == date) {

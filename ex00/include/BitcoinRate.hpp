@@ -19,6 +19,5 @@ class BitcoinRate {
   BitcoinRate(const std::string& filename);
 
   // === Methods ===
-  float getRateForDate(const std::string& date) const;
   bool hasClosestRate(const std::string& date, float& rate) const;
 };
