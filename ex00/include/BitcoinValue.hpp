@@ -11,8 +11,6 @@ struct BitcoinData {
 
 class BitcoinValue {
  private:
-  BitcoinRate _rateDB;
-
   // === Private Methods ===
 
   static bool _isValidInputHeader(const std::string&);
@@ -21,7 +19,6 @@ class BitcoinValue {
   static bool _isValidDate(const std::string&);
   static bool _isValidValue(const std::string&, float&);
   static bool _isLeapYear(int);
-  static bool isValidNumber(const std::string&);
 
   // === OCF (Delete) ===
 

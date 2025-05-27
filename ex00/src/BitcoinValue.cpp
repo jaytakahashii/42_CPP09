@@ -7,6 +7,12 @@
 #include <limits>
 #include <sstream>
 
+#define validPipePos 11
+#define validBeforeSpacePos 10
+#define validAfterSpacePos 12
+#define validMinLength 14
+#define validValuePos 13
+
 // === Public Static Method ===
 
 void BitcoinValue::bitcoinExchange(const std::string& inputFile,
@@ -29,12 +35,10 @@ void BitcoinValue::bitcoinExchange(const std::string& inputFile,
 
 // === Private Methods ===
 
-// ヘッダが正しいか検証
 bool BitcoinValue::_isValidInputHeader(const std::string& inputHeader) {
   return (inputHeader == "date | value");
 }
 
-// データ行を読み取り、計算と出力
 void BitcoinValue::_calculateAndPrint(std::ifstream& file,
                                       const BitcoinRate& rateDB) {
   std::string line;
@@ -56,18 +60,18 @@ void BitcoinValue::_calculateAndPrint(std::ifstream& file,
 }
 
 bool BitcoinValue::_parseLine(const std::string& line, BitcoinData& data) {
-  // パイプの位置を確認
   size_t pipePos = line.find('|');
-  if (pipePos == std::string::npos || pipePos != 11 || line.length() < 13) {
+  if (pipePos == std::string::npos || pipePos != validPipePos ||
+      line.length() < validMinLength) {
     std::cout << "Error: bad input => '" << line << "'" << std::endl;
     return false;
   }
 
   // 日付部分と値部分を明示的に取得
-  std::string datePart = line.substr(0, 10);
-  std::string spaceBefore = line.substr(10, 1);  // パイプ前の空白
-  std::string spaceAfter = line.substr(12, 1);   // パイプ後の空白（1文字目）
-  std::string valuePart = line.substr(13);       // 値の実体
+  std::string datePart = line.substr(0, validBeforeSpacePos);
+  std::string spaceBefore = line.substr(validBeforeSpacePos, 1);
+  std::string spaceAfter = line.substr(validAfterSpacePos, 1);
+  std::string valuePart = line.substr(validValuePos);
 
   // pipeの前後に空白があるか確認
   if (spaceBefore != " " || spaceAfter != " ") {
