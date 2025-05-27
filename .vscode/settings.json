@@ -4,6 +4,8 @@
     "*.layout-template": "vue",
     "*.vue": "vue",
     "stdexcept": "cpp",
-    "vector": "cpp"
+    "vector": "cpp",
+    "iostream": "cpp",
+    "string": "cpp"
   }
 }
