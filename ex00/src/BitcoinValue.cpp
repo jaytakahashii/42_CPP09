@@ -22,7 +22,6 @@ BitcoinValue& BitcoinValue::operator=(const BitcoinValue& other) {
 }
 
 BitcoinValue::~BitcoinValue() {
-  // No dynamic memory to free, but destructor is needed for OCF
 }
 
 // === Constructor ===
@@ -35,7 +34,10 @@ BitcoinValue::BitcoinValue(const std::string& inputFile,
   }
 
   std::string line;
-  std::getline(file, line);  // skip header line
+  std::getline(file, line);
+  if (!_isValidInputHeader(line)) {
+    throw std::runtime_error("invalid input header");
+  }
 
   while (std::getline(file, line)) {
     BitcoinData data;
@@ -62,6 +64,11 @@ void BitcoinValue::processAndPrint() const {
 }
 
 // === Private Method ===
+
+bool BitcoinValue::_isValidInputHeader(const std::string& inputHeader) const {
+  const std::string validHeader = "date | value";
+  return (inputHeader == validHeader);
+}
 
 bool BitcoinValue::_parseLine(const std::string& line, BitcoinData& data) {
   std::istringstream iss(line);

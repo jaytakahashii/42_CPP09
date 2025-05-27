@@ -17,9 +17,10 @@ class BitcoinValue {
 
   // === Private Methods ===
 
-  bool _parseLine(const std::string& line, BitcoinData& data);
-  bool _isValidDate(const std::string& date) const;
-  bool _isValidValue(const std::string& valueStr, float& value) const;
+  bool _isValidInputHeader(const std::string&) const;
+  bool _parseLine(const std::string&, BitcoinData&);
+  bool _isValidDate(const std::string&) const;
+  bool _isValidValue(const std::string&, float&) const;
 
   // === Delete Methods ===
   BitcoinValue();
@@ -27,12 +28,12 @@ class BitcoinValue {
  public:
   // === OCF ===
 
-  BitcoinValue(const BitcoinValue& other);
-  BitcoinValue& operator=(const BitcoinValue& other);
+  BitcoinValue(const BitcoinValue&);
+  BitcoinValue& operator=(const BitcoinValue&);
   ~BitcoinValue();
 
   // === Constructor ===
-  BitcoinValue(const std::string& inputFile, const std::string& rateFile);
+  BitcoinValue(const std::string&, const std::string&);
 
   // === Methods ===
 
