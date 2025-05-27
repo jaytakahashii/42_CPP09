@@ -8,15 +8,15 @@
 int main(int argc, char** argv) {
   if (argc != 2) {
     std::cerr << "Error: could not open file." << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 
   try {
-    BitcoinValue processor(argv[1], DATA_FILE);
-    processor.processAndPrint();
-  } catch (std::exception& e) {
+    std::string inputFile = argv[1];
+    BitcoinValue::bitcoinExchange(inputFile, DATA_FILE);
+  } catch (const std::runtime_error& e) {
     std::cerr << RED "Error: " << e.what() << RESET << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 
   return 0;

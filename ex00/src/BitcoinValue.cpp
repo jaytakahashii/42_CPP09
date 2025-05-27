@@ -7,27 +7,12 @@
 #include <limits>
 #include <sstream>
 
-// === OCF ===
+// === Method ===
 
-BitcoinValue::BitcoinValue(const BitcoinValue& other)
-    : _inputData(other._inputData), _rateDB(other._rateDB) {
-}
+void BitcoinValue::bitcoinExchange(const std::string& inputFile,
+                                   const std::string& rateDBFile) {
+  BitcoinRate rateDB = BitcoinRate(rateDBFile);
 
-BitcoinValue& BitcoinValue::operator=(const BitcoinValue& other) {
-  if (this != &other) {
-    _inputData = other._inputData;
-    _rateDB = other._rateDB;
-  }
-  return *this;
-}
-
-BitcoinValue::~BitcoinValue() {
-}
-
-// === Constructor ===
-BitcoinValue::BitcoinValue(const std::string& inputFile,
-                           const std::string& rateFile)
-    : _rateDB(rateFile) {
   std::ifstream file(inputFile.c_str());
   if (!file.is_open()) {
     throw std::runtime_error("could not open input file");
@@ -39,35 +24,32 @@ BitcoinValue::BitcoinValue(const std::string& inputFile,
     throw std::runtime_error("invalid input header");
   }
 
-  while (std::getline(file, line)) {
-    BitcoinData data;
-    if (_parseLine(line, data)) {
-      _inputData.push_back(data);
-    }
-  }
-}
-
-// === Method ===
-
-void BitcoinValue::processAndPrint() const {
-  for (std::vector<BitcoinData>::const_iterator it = _inputData.begin();
-       it != _inputData.end(); ++it) {
-    float rate;
-    if (_rateDB.hasClosestRate(it->date, rate)) {
-      float result = rate * it->value;
-      std::cout << it->date << " => " << it->value << " = " << result
-                << std::endl;
-    } else {
-      std::cerr << "Error: no valid rate for date " << it->date << std::endl;
-    }
-  }
+  calculateAndPrint(file, rateDB);
 }
 
 // === Private Method ===
 
-bool BitcoinValue::_isValidInputHeader(const std::string& inputHeader) const {
+bool BitcoinValue::_isValidInputHeader(const std::string& inputHeader) {
   const std::string validHeader = "date | value";
   return (inputHeader == validHeader);
+}
+
+void BitcoinValue::calculateAndPrint(std::ifstream& file,
+                                     const BitcoinRate& rateDB) {
+  std::string line;
+  while (std::getline(file, line)) {
+    BitcoinData data;
+    if (_parseLine(line, data)) {
+      float rate;
+      if (rateDB.hasClosestRate(data.date, rate)) {
+        float result = rate * data.value;
+        std::cout << data.date << " => " << data.value << " = " << result
+                  << std::endl;
+      } else {
+        std::cerr << "Error: no valid rate for date " << data.date << std::endl;
+      }
+    }
+  }
 }
 
 bool BitcoinValue::_parseLine(const std::string& line, BitcoinData& data) {
@@ -105,7 +87,7 @@ bool BitcoinValue::_parseLine(const std::string& line, BitcoinData& data) {
   return true;
 }
 
-bool BitcoinValue::_isValidDate(const std::string& date) const {
+bool BitcoinValue::_isValidDate(const std::string& date) {
   if (date.length() != 10 || date[4] != '-' || date[7] != '-')
     return false;
 
@@ -125,8 +107,7 @@ bool BitcoinValue::_isValidDate(const std::string& date) const {
   return true;
 }
 
-bool BitcoinValue::_isValidValue(const std::string& valueStr,
-                                 float& value) const {
+bool BitcoinValue::_isValidValue(const std::string& valueStr, float& value) {
   std::istringstream iss(valueStr);
   if (!(iss >> value)) {
     std::cerr << "Error: bad input => " << valueStr << std::endl;

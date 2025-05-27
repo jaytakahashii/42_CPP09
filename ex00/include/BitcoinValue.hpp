@@ -1,7 +1,6 @@
 #pragma once
 
 #include <string>
-#include <vector>
 
 #include "BitcoinRate.hpp"
 
@@ -12,30 +11,24 @@ struct BitcoinData {
 
 class BitcoinValue {
  private:
-  std::vector<BitcoinData> _inputData;
   BitcoinRate _rateDB;
 
   // === Private Methods ===
 
-  bool _isValidInputHeader(const std::string&) const;
-  bool _parseLine(const std::string&, BitcoinData&);
-  bool _isValidDate(const std::string&) const;
-  bool _isValidValue(const std::string&, float&) const;
+  static bool _isValidInputHeader(const std::string&);
+  static void calculateAndPrint(std::ifstream&, const BitcoinRate&);
+  static bool _parseLine(const std::string&, BitcoinData&);
+  static bool _isValidDate(const std::string&);
+  static bool _isValidValue(const std::string&, float&);
 
-  // === Delete Methods ===
+  // === OCF (Delete) ===
+
   BitcoinValue();
-
- public:
-  // === OCF ===
-
   BitcoinValue(const BitcoinValue&);
   BitcoinValue& operator=(const BitcoinValue&);
   ~BitcoinValue();
 
-  // === Constructor ===
-  BitcoinValue(const std::string&, const std::string&);
-
-  // === Methods ===
-
-  void processAndPrint() const;
+ public:
+  static void bitcoinExchange(const std::string& inputFile,
+                              const std::string& rateFile);
 };
