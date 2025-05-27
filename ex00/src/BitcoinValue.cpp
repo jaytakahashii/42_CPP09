@@ -1,13 +1,13 @@
 #include "BitcoinValue.hpp"
 
-#include <cctype>
+#include <climits>
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
 #include <limits>
 #include <sstream>
 
-// === Method ===
+// === Public Static Method ===
 
 void BitcoinValue::bitcoinExchange(const std::string& inputFile,
                                    const std::string& rateDBFile) {
@@ -24,60 +24,63 @@ void BitcoinValue::bitcoinExchange(const std::string& inputFile,
     throw std::runtime_error("invalid input header");
   }
 
-  calculateAndPrint(file, rateDB);
+  _calculateAndPrint(file, rateDB);
 }
 
-// === Private Method ===
+// === Private Methods ===
 
+// ヘッダが正しいか検証
 bool BitcoinValue::_isValidInputHeader(const std::string& inputHeader) {
-  const std::string validHeader = "date | value";
-  return (inputHeader == validHeader);
+  return (inputHeader == "date | value");
 }
 
-void BitcoinValue::calculateAndPrint(std::ifstream& file,
-                                     const BitcoinRate& rateDB) {
+// データ行を読み取り、計算と出力
+void BitcoinValue::_calculateAndPrint(std::ifstream& file,
+                                      const BitcoinRate& rateDB) {
   std::string line;
   while (std::getline(file, line)) {
     BitcoinData data;
     if (_parseLine(line, data)) {
       float rate;
       if (rateDB.hasClosestRate(data.date, rate)) {
-        float result = rate * data.value;
+        double result =
+            static_cast<double>(rate) * static_cast<double>(data.value);
         std::cout << data.date << " => " << data.value << " = " << result
                   << std::endl;
       } else {
-        std::cerr << "Error: no valid rate for date " << data.date << std::endl;
+        std::cout << "Error: no rate found for date => '" << data.date << "'"
+                  << std::endl;
       }
     }
   }
 }
 
 bool BitcoinValue::_parseLine(const std::string& line, BitcoinData& data) {
-  std::istringstream iss(line);
-  std::string datePart, valuePart;
-
-  if (!std::getline(iss, datePart, '|')) {
-    std::cerr << "Error: bad input => " << line << std::endl;
+  // パイプの位置を確認
+  size_t pipePos = line.find('|');
+  if (pipePos == std::string::npos || pipePos != 11) {
+    std::cout << "Error: bad input => '" << line << "'" << std::endl;
     return false;
   }
 
-  if (!std::getline(iss, valuePart)) {
-    std::cerr << "Error: bad input => " << line << std::endl;
+  // 日付部分と値部分を明示的に取得
+  std::string datePart = line.substr(0, 10);
+  std::string spaceBefore = line.substr(10, 1);  // パイプ前の空白
+  std::string spaceAfter = line.substr(12, 1);   // パイプ後の空白（1文字目）
+  std::string valuePart = line.substr(13);       // 値の実体
+
+  // pipeの前後に空白があるか確認
+  if (spaceBefore != " " || spaceAfter != " ") {
+    std::cout << "Error: bad input => '" << line << "'" << std::endl;
     return false;
   }
 
-  // Trim whitespace
-  datePart.erase(0, datePart.find_first_not_of(" \t"));
-  datePart.erase(datePart.find_last_not_of(" \t") + 1);
-  valuePart.erase(0, valuePart.find_first_not_of(" \t"));
-  valuePart.erase(valuePart.find_last_not_of(" \t") + 1);
+  if (!_isValidDate(datePart)) {
+    std::cout << "Error: bad input => '" << line << "'" << std::endl;
+    return false;
+  }
 
   float value;
-  if (!_isValidDate(datePart)) {
-    std::cerr << "Error: bad input => " << line << std::endl;
-    return false;
-  }
-
   if (!_isValidValue(valuePart, value)) {
     return false;
   }
@@ -87,40 +90,84 @@ bool BitcoinValue::_parseLine(const std::string& line, BitcoinData& data) {
   return true;
 }
 
+// 日付形式チェック + うるう年対応
 bool BitcoinValue::_isValidDate(const std::string& date) {
-  if (date.length() != 10 || date[4] != '-' || date[7] != '-')
+  if (date.empty() || date.length() != 10 || date[4] != '-' || date[7] != '-')
     return false;
 
-  int y, m, d;
-  try {
-    y = std::atoi(date.substr(0, 4).c_str());
-    m = std::atoi(date.substr(5, 2).c_str());
-    d = std::atoi(date.substr(8, 2).c_str());
-  } catch (...) {
-    return false;
+  // 年月日の部分が数字であることを確認
+  for (size_t i = 0; i < date.length(); ++i) {
+    if (i == 4 || i == 7)
+      continue;  // ハイフンはスキップ
+    if (!std::isdigit(date[i])) {
+      return false;
+    }
   }
 
-  if (m < 1 || m > 12 || d < 1 || d > 31)
+  // 年月日の部分を整数に変換
+  int y = std::atoi(date.substr(0, 4).c_str());
+  int m = std::atoi(date.substr(5, 2).c_str());
+  int d = std::atoi(date.substr(8, 2).c_str());
+
+  if (y < 0 || m < 1 || m > 12 || d < 1)
     return false;
 
-  // 簡易チェック（うるう年や日数は厳密にはしていません）
+  const int daysInMonth[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+
+  int maxDay = daysInMonth[m - 1];
+  if (m == 2 && _isLeapYear(y))
+    maxDay = 29;
+
+  return d <= maxDay;
+}
+
+// うるう年判定
+bool BitcoinValue::_isLeapYear(int year) {
+  if (year % 4 != 0)
+    return false;
+  if (year % 100 != 0)
+    return true;
+  return (year % 400 == 0);
+}
+
+bool BitcoinValue::isValidNumber(const std::string& str) {
+  // 小数点が1つだけかつ数字のみで構成されているか確認
+  size_t dotCount = 0;
+  for (size_t i = 0; i < str.length(); ++i) {
+    if (str[i] == '.') {
+      dotCount++;
+      if (dotCount > 1)
+        return false;  // 小数点が2つ以上ある場合は無効
+    } else if (!isdigit(str[i])) {
+      return false;  // 数字以外の文字が含まれている場合は無効
+    }
+  }
+
   return true;
 }
 
+// 値のバリデーション
 bool BitcoinValue::_isValidValue(const std::string& valueStr, float& value) {
+  if (!isValidNumber(valueStr)) {
+    std::cout << "Error: not a valid number : '" << valueStr << "'"
+              << std::endl;
+    return false;
+  }
+
   std::istringstream iss(valueStr);
   if (!(iss >> value)) {
-    std::cerr << "Error: bad input => " << valueStr << std::endl;
+    std::cout << "Error: not a valid number : '" << valueStr << "'"
+              << std::endl;
     return false;
   }
 
   if (value < 0) {
-    std::cerr << "Error: not a positive number." << std::endl;
+    std::cout << "Error: not a positive number." << std::endl;
     return false;
   }
 
   if (value > 1000) {
-    std::cerr << "Error: too large a number." << std::endl;
+    std::cout << "Error: too large a number." << std::endl;
     return false;
   }
 

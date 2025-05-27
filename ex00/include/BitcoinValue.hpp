@@ -16,10 +16,12 @@ class BitcoinValue {
   // === Private Methods ===
 
   static bool _isValidInputHeader(const std::string&);
-  static void calculateAndPrint(std::ifstream&, const BitcoinRate&);
+  static void _calculateAndPrint(std::ifstream&, const BitcoinRate&);
   static bool _parseLine(const std::string&, BitcoinData&);
   static bool _isValidDate(const std::string&);
   static bool _isValidValue(const std::string&, float&);
+  static bool _isLeapYear(int);
+  static bool isValidNumber(const std::string&);
 
   // === OCF (Delete) ===
 
