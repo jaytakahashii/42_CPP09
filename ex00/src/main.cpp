@@ -1,6 +1,9 @@
 #include <iostream>
 
 #include "BitcoinValue.hpp"
+#include "color.hpp"
+
+#define DATA_FILE "data/data.csv"
 
 int main(int argc, char** argv) {
   if (argc != 2) {
@@ -9,10 +12,10 @@ int main(int argc, char** argv) {
   }
 
   try {
-    BitcoinValue processor(argv[1], "../data/data.csv");
+    BitcoinValue processor(argv[1], DATA_FILE);
     processor.processAndPrint();
   } catch (std::exception& e) {
-    std::cerr << "Error: " << e.what() << std::endl;
+    std::cerr << RED "Error: " << e.what() << RESET << std::endl;
     return 1;
   }
 
