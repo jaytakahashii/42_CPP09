@@ -137,7 +137,8 @@ bool BitcoinValue::_isValidValue(const std::string& valueStr, float& value) {
     return false;
   }
 
-  if (!std::isdigit(valueStr[0]) && valueStr[0] != '-') {
+  if (!std::isdigit(valueStr[0]) &&
+      (valueStr[0] != '-' && valueStr[0] != '+')) {
     std::cout << "Error: not a valid number : '" << valueStr << "'"
               << std::endl;
     return false;
