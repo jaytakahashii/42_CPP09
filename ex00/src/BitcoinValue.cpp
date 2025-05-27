@@ -130,22 +130,6 @@ bool BitcoinValue::_isLeapYear(int year) {
   return (year % 400 == 0);
 }
 
-bool BitcoinValue::isValidNumber(const std::string& str) {
-  // 小数点が1つだけかつ数字のみで構成されているか確認
-  size_t dotCount = 0;
-  for (size_t i = 0; i < str.length(); ++i) {
-    if (str[i] == '.') {
-      dotCount++;
-      if (dotCount > 1)
-        return false;  // 小数点が2つ以上ある場合は無効
-    } else if (!isdigit(str[i])) {
-      return false;  // 数字以外の文字が含まれている場合は無効
-    }
-  }
-
-  return true;
-}
-
 // 値のバリデーション
 bool BitcoinValue::_isValidValue(const std::string& valueStr, float& value) {
   if (valueStr.empty()) {
