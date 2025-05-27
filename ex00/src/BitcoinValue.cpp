@@ -58,7 +58,7 @@ void BitcoinValue::_calculateAndPrint(std::ifstream& file,
 bool BitcoinValue::_parseLine(const std::string& line, BitcoinData& data) {
   // パイプの位置を確認
   size_t pipePos = line.find('|');
-  if (pipePos == std::string::npos || pipePos != 11) {
+  if (pipePos == std::string::npos || pipePos != 11 || line.length() < 13) {
     std::cout << "Error: bad input => '" << line << "'" << std::endl;
     return false;
   }
@@ -148,14 +148,21 @@ bool BitcoinValue::isValidNumber(const std::string& str) {
 
 // 値のバリデーション
 bool BitcoinValue::_isValidValue(const std::string& valueStr, float& value) {
-  if (!isValidNumber(valueStr)) {
+  if (valueStr.empty()) {
+    std::cout << "Error: empty value." << std::endl;
+    return false;
+  }
+
+  if (!std::isdigit(valueStr[0]) && valueStr[0] != '-') {
     std::cout << "Error: not a valid number : '" << valueStr << "'"
               << std::endl;
     return false;
   }
 
-  std::istringstream iss(valueStr);
-  if (!(iss >> value)) {
+  char* endptr;
+  std::string copy = valueStr;
+  value = std::strtod(copy.c_str(), &endptr);
+  if (*endptr != '\0') {
     std::cout << "Error: not a valid number : '" << valueStr << "'"
               << std::endl;
     return false;
