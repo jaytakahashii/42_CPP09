@@ -7,9 +7,10 @@ class BitcoinRate {
  private:
   std::map<std::string, float> _rateMap;
 
+  BitcoinRate();
+
  public:
   // === OCF ===
-  BitcoinRate();
   BitcoinRate(const BitcoinRate& other);
   BitcoinRate& operator=(const BitcoinRate& other);
   ~BitcoinRate();

@@ -5,22 +5,22 @@
 #include <sstream>
 #include <stdexcept>
 
-BitcoinRate::BitcoinRate() {
-  // Default constructor does nothing
-}
+// === OCF ===
+
 BitcoinRate::BitcoinRate(const BitcoinRate& other) : _rateMap(other._rateMap) {
-  // Copy constructor
 }
+
 BitcoinRate& BitcoinRate::operator=(const BitcoinRate& other) {
   if (this != &other) {
     _rateMap = other._rateMap;
   }
   return *this;
 }
+
 BitcoinRate::~BitcoinRate() {
-  // Destructor does nothing, as we are not managing any dynamic memory
-  // but it is needed for OCF compliance
 }
+
+// === Constructor ===
 
 BitcoinRate::BitcoinRate(const std::string& filename) {
   std::ifstream file(filename.c_str());
