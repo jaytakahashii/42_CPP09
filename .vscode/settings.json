@@ -1,0 +1,11 @@
+{
+  "files.associations": {
+    "*.page-template": "vue",
+    "*.layout-template": "vue",
+    "*.vue": "vue",
+    "stdexcept": "cpp",
+    "vector": "cpp",
+    "iostream": "cpp",
+    "string": "cpp"
+  }
+}
