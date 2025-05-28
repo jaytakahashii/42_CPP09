@@ -1,10 +1,10 @@
-#include "RPN.hpp"
-
 #include <cstdlib>
 #include <iostream>
 #include <sstream>
 
-int RPN::evaluate(const std::string& expression) {
+#include "InvertedPolish.hpp"
+
+int InvertedPolish::evaluate(const std::string& expression) {
   std::istringstream iss(expression);
   std::string token;
   std::stack<int> stack;
@@ -32,11 +32,12 @@ int RPN::evaluate(const std::string& expression) {
   return 0;
 }
 
-bool RPN::isOperator(const std::string& token) {
+bool InvertedPolish::isOperator(const std::string& token) {
   return token == "+" || token == "-" || token == "*" || token == "/";
 }
 
-bool RPN::applyOperation(std::stack<int>& stack, const std::string& op) {
+bool InvertedPolish::applyOperation(std::stack<int>& stack,
+                                    const std::string& op) {
   if (stack.size() < 2)
     return false;
 

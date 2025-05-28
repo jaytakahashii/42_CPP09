@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "RPN.hpp"
+#include "InvertedPolish.hpp"
 
 int main(int argc, char** argv) {
   if (argc != 2) {
@@ -8,5 +8,5 @@ int main(int argc, char** argv) {
     return 1;
   }
 
-  return RPN::evaluate(argv[1]);
+  return InvertedPolish::evaluate(argv[1]);
 }
