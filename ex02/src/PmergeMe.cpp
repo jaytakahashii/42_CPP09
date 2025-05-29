@@ -44,7 +44,7 @@ void PmergeMe::recursiveSort(std::vector<int>& data, size_t left,
   // bigger を再帰的にソート
   recursiveSort(bigger, 0, bigger.size());
 
-  // sorted に小さい方（ペアの）1つを先頭に追加（Wikipedia 方式）
+  // sorted に小さい方 pending の1つを先頭に追加
   std::vector<int> sorted;
   sorted.push_back(pending[0]);  // 一番最初のペアの小さい方
   pending.erase(pending.begin());
@@ -89,18 +89,18 @@ void PmergeMe::recursiveSort(std::deque<int>& data, size_t left, size_t right) {
   // bigger を再帰的にソート
   recursiveSort(bigger, 0, bigger.size());
 
-  // sorted に初期要素を追加
+  // sorted に小さい方 pending の1つを先頭に追加
   std::deque<int> sorted;
-  sorted.push_back(pending[0]);  // 先頭の pending をまず入れる
+  sorted.push_back(pending[0]);  // 一番最初のペアの小さい方
   pending.pop_front();
 
-  // bigger の要素を追加（昇順）
+  // bigger の先頭を sorted に追加（大きい順で既に昇順）
   sorted.insert(sorted.end(), bigger.begin(), bigger.end());
 
-  // pending の残りを Jacobsthal 順に挿入
+  // pending の残りを Jacobsthal 数列順で挿入
   insertPending(sorted, pending);
 
-  // 結果を data に書き戻す
+  // data に結果を書き戻す
   for (size_t i = 0; i < sorted.size(); ++i) {
     data[left + i] = sorted[i];
   }
