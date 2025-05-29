@@ -1,8 +1,6 @@
 #include <cstdlib>
 #include <deque>
-#include <iomanip>
 #include <iostream>
-#include <set>
 #include <string>
 #include <vector>
 
@@ -43,12 +41,22 @@ int main(int argc, char** argv) {
   }
 
   std::cout << "Before:  ";
-  printVector(vectorNumbers);
-  std::cout << "After:   ";
-  printVector(vectorNumbers);
+  printContainer(vectorNumbers);
 
-  double time = measure_us(MergeInsertionSortVector::sort, vectorNumbers);
-  std::cout << "Time: " << time << " us" << std::endl;
+  double sortTimeVector =
+      measure_us(MergeInsertionSortVector::sort, vectorNumbers);
+
+  // double sortTimeDeque =
+  //     measure_us(MergeInsertionSortDeque::sort, dequeNumbers);
+
+  std::cout << "After:   ";
+  printContainer(vectorNumbers);
+
+  std::cout << "Time to process a range of 5 elements with std::vector:  "
+            << sortTimeVector << " us" << std::endl;
+
+  // std::cout << "Time to process a range of 5 elements with std::deque:   "
+  //           << sortTimeDeque << " us" << std::endl;
 
   return EXIT_SUCCESS;
 }

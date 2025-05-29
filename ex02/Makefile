@@ -9,6 +9,7 @@ INCLUDE_DIR	= include/
 INCLUDE			= -I $(INCLUDE_DIR)
 HEADERS			= color.hpp \
 							utils.hpp \
+							utils.tpp \
 							MergeInsertionSortVector.hpp \
 HEADER			= $(addprefix $(INCLUDE_DIR), $(HEADERS))
 
@@ -23,7 +24,6 @@ RM					= rm -rf
 
 SRC_DIR			= src/
 SRC_FILES		=	main.cpp \
-							utils.cpp \
 							MergeInsertionSortVector.cpp \
 
 
