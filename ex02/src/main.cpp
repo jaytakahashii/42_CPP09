@@ -21,7 +21,8 @@ static bool isValidArgument(const std::string& arg,
                             std::deque<int>& dequeNumbers) {
   char* endPtr;
   long number = std::strtol(arg.c_str(), &endPtr, 10);
-  if (*endPtr != '\0') {
+  if (*endPtr != '\0' || endPtr == arg.c_str() || number < 0 ||
+      number > std::numeric_limits<int>::max()) {
     return false;
   } else {
     vectorNumbers.push_back(static_cast<int>(number));
