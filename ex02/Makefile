@@ -8,11 +8,7 @@ OBJ_DIR			= .obj/
 INCLUDE_DIR	= include/
 INCLUDE			= -I $(INCLUDE_DIR)
 HEADERS			= color.hpp \
-							utils.hpp \
-							utils.tpp \
-							MergeInsertionSortVector.hpp \
-							MergeInsertionSortVectorDebug.hpp \
-							MergeInsertionSortDeque.hpp \
+							PmergeMe.hpp \
 
 HEADER			= $(addprefix $(INCLUDE_DIR), $(HEADERS))
 
@@ -20,6 +16,7 @@ DEPS				= $(HEADER) $(MAKEFILE)
 
 CXX					= c++
 CXXFLAGS		= -Wall -Wextra -Werror -std=c++98
+DEBUGFLAGS	= -D __DEBUG__=true
 PEDANT			= -pedantic
 SANITIZE		= -fsanitize=address -g3
 
@@ -27,8 +24,7 @@ RM					= rm -rf
 
 SRC_DIR			= src/
 SRC_FILES		=	main.cpp \
-							MergeInsertionSortVector.cpp \
-							MergeInsertionSortDeque.cpp \
+							PmergeMe.cpp \
 
 D_SRC_FILES	= main.debug.cpp \
 							MergeInsertionSortVectorDebug.cpp \
@@ -80,10 +76,7 @@ leaks: CXXFLAGS += $(SANITIZE)
 leaks: re
 	@echo $(G) "leaks mode activated.\n" $(X)
 
-debug: $(OBJ_DIR) $(D_OBJS) $(DEPS)
-	@echo $(Y) "src files successfully compiled.\n" $(X)
-	$(CXX) $(CXXFLAGS) $(D_OBJS) -o $(NAME)
-	@echo $(G) "!! $(NAME) created !!\n" $(X)
-	@echo $(B) "debug mode activated.\n" $(X)
+debug: CXXFLAGS += $(DEBUGFLAGS)
+debug: re
 
 .PHONY: all clean fclean re pedant leaks debug

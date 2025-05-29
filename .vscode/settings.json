@@ -50,6 +50,7 @@
     "*.tpp": "cpp"
   },
   "cSpell.words": [
+    "DEBUGFLAGS",
     "Deque",
     "Jacobsthal",
     "Pmerge"

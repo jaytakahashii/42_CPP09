@@ -1,13 +1,20 @@
-#include <cstdlib>
 #include <deque>
 #include <iostream>
-#include <string>
 #include <vector>
 
-#include "MergeInsertionSortDeque.hpp"
-#include "MergeInsertionSortVector.hpp"
+#include "PmergeMe.hpp"
 #include "color.hpp"
-#include "utils.hpp"
+
+template <typename Func, typename Arg>
+static double measure_us(const Func& func, Arg& arg) {
+  std::chrono::high_resolution_clock::time_point start =
+      std::chrono::high_resolution_clock::now();
+  func(arg);
+  std::chrono::high_resolution_clock::time_point end =
+      std::chrono::high_resolution_clock::now();
+  std::chrono::duration<double, std::micro> elapsed = end - start;
+  return elapsed.count();
+}
 
 static bool isValidArgument(const std::string& arg,
                             std::vector<int>& vectorNumbers,
@@ -24,6 +31,10 @@ static bool isValidArgument(const std::string& arg,
 }
 
 int main(int argc, char** argv) {
+  if (__DEBUG__) {
+    std::cout << BOLDWHITE "Debug mode is ON.\n" RESET << std::endl;
+  }
+
   if (argc == 1) {
     std::cerr << RED << "Error: invalid number of arguments." << RESET
               << std::endl;
@@ -44,17 +55,18 @@ int main(int argc, char** argv) {
   std::cout << "Before:  ";
   printContainer(vectorNumbers);
 
-  double sortTimeVector =
-      measure_us(MergeInsertionSortVector::sort, vectorNumbers);
-
-  double sortTimeDeque =
-      measure_us(MergeInsertionSortDeque::sort, dequeNumbers);
+  double sortTimeVector;
+  double sortTimeDeque;
+  if (__DEBUG__) {
+    sortTimeVector = measure_us(PmergeMe::sortVector_D, vectorNumbers);
+    sortTimeDeque = measure_us(PmergeMe::sortDeque, dequeNumbers);
+  } else {
+    sortTimeVector = measure_us(PmergeMe::sortVector, vectorNumbers);
+    sortTimeDeque = measure_us(PmergeMe::sortDeque, dequeNumbers);
+  }
 
   std::cout << "AfterV:   ";
   printContainer(vectorNumbers);
-
-  std::cout << "AfterD:   ";
-  printContainer(dequeNumbers);
 
   std::cout << "Time to process a range of 5 elements with std::vector:  "
             << sortTimeVector << " us" << std::endl;
