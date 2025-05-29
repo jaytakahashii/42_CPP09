@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 
+#include "MergeInsertionSortVector.hpp"
 #include "color.hpp"
 #include "utils.hpp"
 
@@ -42,8 +43,9 @@ int main(int argc, char** argv) {
   std::cout << "Before:  ";
   printVector(vectorNumbers);
 
+  MergeInsertionSortVector::sort(vectorNumbers);
   std::cout << "After:   ";
-  printDeque(dequeNumbers);
+  printVector(vectorNumbers);
 
   return EXIT_SUCCESS;
 }

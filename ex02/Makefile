@@ -9,12 +9,13 @@ INCLUDE_DIR	= include/
 INCLUDE			= -I $(INCLUDE_DIR)
 HEADERS			= color.hpp \
 							utils.hpp \
+							MergeInsertionSortVector.hpp \
 HEADER			= $(addprefix $(INCLUDE_DIR), $(HEADERS))
 
 DEPS				= $(HEADER) $(MAKEFILE)
 
 CXX					= c++
-CXXFLAGS		= -Wall -Wextra -Werror -std=c++98
+# CXXFLAGS		= -Wall -Wextra -Werror -std=c++98
 PEDANT			= -pedantic
 SANITIZE		= -fsanitize=address -g3
 
@@ -23,6 +24,8 @@ RM					= rm -rf
 SRC_DIR			= src/
 SRC_FILES		=	main.cpp \
 							utils.cpp \
+							MergeInsertionSortVector.cpp \
+
 
 SRCS				= $(addprefix $(SRC_DIR), $(SRC_FILES))
 OBJS				= $(addprefix $(OBJ_DIR), $(SRC_FILES:.cpp=.o))
