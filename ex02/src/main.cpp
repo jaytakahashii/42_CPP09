@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 
+#include "MergeInsertionSortDeque.hpp"
 #include "MergeInsertionSortVector.hpp"
 #include "color.hpp"
 #include "utils.hpp"
@@ -46,17 +47,20 @@ int main(int argc, char** argv) {
   double sortTimeVector =
       measure_us(MergeInsertionSortVector::sort, vectorNumbers);
 
-  // double sortTimeDeque =
-  //     measure_us(MergeInsertionSortDeque::sort, dequeNumbers);
+  double sortTimeDeque =
+      measure_us(MergeInsertionSortDeque::sort, dequeNumbers);
 
-  std::cout << "After:   ";
+  std::cout << "AfterV:   ";
   printContainer(vectorNumbers);
+
+  std::cout << "AfterD:   ";
+  printContainer(dequeNumbers);
 
   std::cout << "Time to process a range of 5 elements with std::vector:  "
             << sortTimeVector << " us" << std::endl;
 
-  // std::cout << "Time to process a range of 5 elements with std::deque:   "
-  //           << sortTimeDeque << " us" << std::endl;
+  std::cout << "Time to process a range of 5 elements with std::deque:   "
+            << sortTimeDeque << " us" << std::endl;
 
   return EXIT_SUCCESS;
 }

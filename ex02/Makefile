@@ -12,6 +12,7 @@ HEADERS			= color.hpp \
 							utils.tpp \
 							MergeInsertionSortVector.hpp \
 							MergeInsertionSortVectorDebug.hpp \
+							MergeInsertionSortDeque.hpp \
 
 HEADER			= $(addprefix $(INCLUDE_DIR), $(HEADERS))
 
@@ -27,6 +28,7 @@ RM					= rm -rf
 SRC_DIR			= src/
 SRC_FILES		=	main.cpp \
 							MergeInsertionSortVector.cpp \
+							MergeInsertionSortDeque.cpp \
 
 D_SRC_FILES	= main.debug.cpp \
 							MergeInsertionSortVectorDebug.cpp \
