@@ -65,7 +65,7 @@ int main(int argc, char** argv) {
     sortTimeDeque = measure_us(PmergeMe::sortDeque, dequeNumbers);
   }
 
-  std::cout << "AfterV:   ";
+  std::cout << "After:   ";
   printContainer(vectorNumbers);
 
   std::cout << "Time to process a range of 5 elements with std::vector:  "
