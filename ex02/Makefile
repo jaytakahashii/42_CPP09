@@ -26,13 +26,8 @@ SRC_DIR			= src/
 SRC_FILES		=	main.cpp \
 							PmergeMe.cpp \
 
-D_SRC_FILES	= main.debug.cpp \
-							MergeInsertionSortVectorDebug.cpp \
-
 SRCS				= $(addprefix $(SRC_DIR), $(SRC_FILES))
-D_SRCS			= $(addprefix $(SRC_DIR), $(D_SRC_FILES))
 OBJS				= $(addprefix $(OBJ_DIR), $(SRC_FILES:.cpp=.o))
-D_OBJS			= $(addprefix $(OBJ_DIR), $(D_SRC_FILES:.cpp=.o))
 
 # color ************
 Y		= "\033[33m"
