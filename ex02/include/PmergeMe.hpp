@@ -40,6 +40,10 @@ class PmergeMe {
 
 template <typename Container>
 void printContainer(const Container& container) {
+  if (container.empty()) {
+    std::cout << "Container is empty." << std::endl;
+    return;
+  }
   for (typename Container::const_iterator it = container.begin();
        it != container.end(); ++it) {
     std::cout << *it;

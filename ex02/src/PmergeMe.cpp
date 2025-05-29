@@ -2,6 +2,8 @@
 
 #include <iostream>
 
+#include "color.hpp"
+
 void PmergeMe::sortVector(std::vector<int>& data) {
   if (data.size() <= 1)
     return;
@@ -133,23 +135,25 @@ void PmergeMe::insertPending(std::deque<int>& sorted,
                              const std::deque<int>& pend) {
   size_t n = pend.size();
   std::vector<size_t> jacobIndices = getJacobsthalIndices(n);
-
   std::vector<bool> used(n, false);
-  for (size_t i = 0; i < jacobIndices.size(); ++i) {
-    if (jacobIndices[i] >= n)
+
+  for (size_t idx = 0; idx < jacobIndices.size(); ++idx) {
+    if (jacobIndices[idx] >= n)
       break;
-    used[jacobIndices[i]] = true;
+    used[jacobIndices[idx]] = true;
+    int value = pend[jacobIndices[idx]];
     std::deque<int>::iterator pos =
-        std::lower_bound(sorted.begin(), sorted.end(), pend[jacobIndices[i]]);
-    sorted.insert(pos, pend[jacobIndices[i]]);
+        std::lower_bound(sorted.begin(), sorted.end(), value);
+    sorted.insert(pos, pend[jacobIndices[idx]]);
   }
 
   // 未使用のインデックスを逆順に挿入
-  for (int i = static_cast<int>(n) - 1; i >= 0; --i) {
-    if (!used[i]) {
+  for (int idx = static_cast<int>(n) - 1; idx >= 0; --idx) {
+    if (!used[idx]) {
+      int value = pend[idx];
       std::deque<int>::iterator pos =
-          std::lower_bound(sorted.begin(), sorted.end(), pend[i]);
-      sorted.insert(pos, pend[i]);
+          std::lower_bound(sorted.begin(), sorted.end(), value);
+      sorted.insert(pos, value);
     }
   }
 }
@@ -183,7 +187,9 @@ void PmergeMe::recursiveSort_D(std::vector<int>& data, size_t left,
   if (size <= 1)
     return;
 
-  std::cout << "\n[recursiveSort] range [" << left << ", " << right << ") ";
+  std::cout << BOLDCYAN << "\n[recursiveSort]" << RESET << std::endl;
+  std::cout << "range (" << left << ", " << right << ") , " << "size = " << size
+            << std::endl;
   printContainerSub(data, left, right);
 
   // ステップ 1: ペア分け
@@ -191,9 +197,12 @@ void PmergeMe::recursiveSort_D(std::vector<int>& data, size_t left,
   for (size_t i = 0; i + 1 < size; i += 2) {
     int a = data[left + i];
     int b = data[left + i + 1];
-    std::cout << " compare: (" << a << ", " << b << ") → ";
+    std::cout << " compare: (" << a << ", " << b << ") "
+              << "→ ";
     if (a > b) {
-      std::cout << "bigger=" << a << ", pending=" << b << "\n";
+      std::cout << "bigger=" << BOLDGREEN << a << RESET << ","
+                << " pending=" << BOLDMAGENTA << b << "\n"
+                << RESET;
       bigger.push_back(a);
       pending.push_back(b);
     } else {
@@ -205,48 +214,67 @@ void PmergeMe::recursiveSort_D(std::vector<int>& data, size_t left,
 
   // 奇数個の場合
   if (size % 2 != 0) {
-    std::cout << " unpaired: " << data[left + size - 1] << " → pending\n";
+    std::cout << " unpaired: " << BOLDMAGENTA << data[left + size - 1]
+              << " → pending" << RESET << std::endl;
     pending.push_back(data[left + size - 1]);
   }
 
   // ステップ 2: bigger をソート
-  std::cout << " recursive sort on 'bigger': ";
+  std::cout << BOLDGREEN << " bigger:  ";
   printContainer(bigger);
-  recursiveSort(bigger, 0, bigger.size());
+  std::cout << RESET;
+  std::cout << BOLDMAGENTA << " pending: ";
+  printContainer(pending);
+  std::cout << RESET;
+  recursiveSort_D(bigger, 0, bigger.size());
 
   // ステップ 3: sorted の初期化
+  std::cout << BOLDWHITE << "\n [Start Insertion] " << RESET << std::endl;
+  std::cout << BOLDGREEN << " now bigger:  ";
+  printContainer(bigger);
+  std::cout << RESET;
+  std::cout << BOLDMAGENTA << " now pending: ";
+  printContainer(pending);
+  std::cout << RESET;
   std::vector<int> sorted;
+  std::cout << " initial sorted: " << BOLDMAGENTA << "pending[" << RESET << "0"
+            << BOLDMAGENTA << "] = " << pending[0] << RESET
+            << " → insert at sorted[0]" << std::endl;
   sorted.push_back(pending[0]);
-  std::cout << " initial sorted = [pending[0] = " << pending[0] << "]\n";
   pending.erase(pending.begin());
 
   sorted.insert(sorted.end(), bigger.begin(), bigger.end());
-  std::cout << " after adding bigger: ";
+  std::cout << BOLDGREEN << " bigger(sorted):  ";
   printContainer(sorted);
+  std::cout << RESET;
 
   // ステップ 4: pending を Jacobsthal 順で挿入
-  insertPending(sorted, pending);
+  insertPending_D(sorted, pending);
 
   // 書き戻し
   for (size_t i = 0; i < sorted.size(); ++i) {
     data[left + i] = sorted[i];
   }
+  std::cout << BOLDWHITE << "\n Now Data: ";
+  printContainer(data);
+  std::cout << RESET;
+  std::cout << BOLDWHITE << " [End Insertion] " << RESET << std::endl;
 }
 
 void PmergeMe::insertPending_D(std::vector<int>& sorted,
                                const std::vector<int>& pend) {
+  std::cout << BOLDWHITE << "\n  [Insert Pending]" << RESET << std::endl;
   size_t n = pend.size();
   std::vector<size_t> jacobIndices = getJacobsthalIndices(n);
   std::vector<bool> used(n, false);
 
-  std::cout << " insertPending: pend = ";
+  std::cout << BOLDMAGENTA << "  pending = ";
   printContainer(pend);
+  std::cout << RESET;
 
-  std::cout << " Jacobsthal order indices = ";
-  for (size_t i = 0; i < jacobIndices.size(); ++i) {
-    std::cout << i << " ";
-  }
-  std::cout << "\n";
+  std::cout << BOLDYELLOW << "  Jacobsthal order indices = ";
+  printContainer(jacobIndices);
+  std::cout << RESET << std::endl;
 
   for (size_t idx = 0; idx < jacobIndices.size(); ++idx) {
     if (idx >= n)
@@ -255,18 +283,19 @@ void PmergeMe::insertPending_D(std::vector<int>& sorted,
     int value = pend[idx];
     std::vector<int>::iterator pos =
         std::lower_bound(sorted.begin(), sorted.end(), value);
-    std::cout << " insert " << value << " at position "
-              << (pos - sorted.begin()) << " (Jacobsthal)\n";
+    std::cout << "  insert " << value << " at position "
+              << (pos - sorted.begin()) << BOLDYELLOW << " (Jacobsthal)"
+              << RESET << std::endl;
     sorted.insert(pos, value);
   }
 
   // 残りを逆順で挿入
-  for (int i = static_cast<int>(n) - 1; i >= 0; --i) {
-    if (!used[i]) {
-      int value = pend[i];
+  for (int idx = static_cast<int>(n) - 1; idx >= 0; --idx) {
+    if (!used[idx]) {
+      int value = pend[idx];
       std::vector<int>::iterator pos =
           std::lower_bound(sorted.begin(), sorted.end(), value);
-      std::cout << " insert " << value << " at position "
+      std::cout << "  insert " << value << " at position "
                 << (pos - sorted.begin()) << " (reverse remaining)\n";
       sorted.insert(pos, value);
     }
