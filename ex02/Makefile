@@ -11,6 +11,8 @@ HEADERS			= color.hpp \
 							utils.hpp \
 							utils.tpp \
 							MergeInsertionSortVector.hpp \
+							MergeInsertionSortVectorDebug.hpp \
+
 HEADER			= $(addprefix $(INCLUDE_DIR), $(HEADERS))
 
 DEPS				= $(HEADER) $(MAKEFILE)
@@ -26,9 +28,13 @@ SRC_DIR			= src/
 SRC_FILES		=	main.cpp \
 							MergeInsertionSortVector.cpp \
 
+D_SRC_FILES	= main.debug.cpp \
+							MergeInsertionSortVectorDebug.cpp \
 
 SRCS				= $(addprefix $(SRC_DIR), $(SRC_FILES))
+D_SRCS			= $(addprefix $(SRC_DIR), $(D_SRC_FILES))
 OBJS				= $(addprefix $(OBJ_DIR), $(SRC_FILES:.cpp=.o))
+D_OBJS			= $(addprefix $(OBJ_DIR), $(D_SRC_FILES:.cpp=.o))
 
 # color ************
 Y		= "\033[33m"
@@ -72,4 +78,10 @@ leaks: CXXFLAGS += $(SANITIZE)
 leaks: re
 	@echo $(G) "leaks mode activated.\n" $(X)
 
-.PHONY: all clean fclean re pedant leaks
+debug: $(OBJ_DIR) $(D_OBJS) $(DEPS)
+	@echo $(Y) "src files successfully compiled.\n" $(X)
+	$(CXX) $(CXXFLAGS) $(D_OBJS) -o $(NAME)
+	@echo $(G) "!! $(NAME) created !!\n" $(X)
+	@echo $(B) "debug mode activated.\n" $(X)
+
+.PHONY: all clean fclean re pedant leaks debug

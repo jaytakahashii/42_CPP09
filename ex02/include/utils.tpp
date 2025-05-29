@@ -19,6 +19,21 @@ void printContainer(const Container& container) {
   }
 }
 
+template <typename Container>
+void printContainerSub(const Container& vec, size_t left, size_t right) {
+  if (left >= right || left >= vec.size() || right > vec.size()) {
+    std::cout << "Invalid range [" << left << ", " << right << ")" << std::endl;
+    return;
+  }
+  for (size_t i = left; i < right; ++i) {
+    std::cout << vec[i];
+    if (i + 1 < right) {
+      std::cout << " ";
+    }
+  }
+  std::cout << std::endl;
+}
+
 template <typename Func, typename Arg>
 double measure_us(const Func& func, Arg& arg) {
   std::chrono::high_resolution_clock::time_point start =
