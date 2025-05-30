@@ -277,10 +277,10 @@ void PmergeMe::insertPending_D(std::vector<int>& sorted,
   std::cout << RESET << std::endl;
 
   for (size_t idx = 0; idx < jacobIndices.size(); ++idx) {
-    if (idx >= n)
+    if (jacobIndices[idx] >= n)
       break;
-    used[idx] = true;
-    int value = pend[idx];
+    used[jacobIndices[idx]] = true;
+    int value = pend[jacobIndices[idx]];
     std::vector<int>::iterator pos =
         std::lower_bound(sorted.begin(), sorted.end(), value);
     std::cout << "  insert " << value << " at position "
