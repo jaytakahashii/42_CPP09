@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "InvertedPolish.hpp"
+#include "RPN.hpp"
 #include "color.hpp"
 
 int main(int argc, char** argv) {
@@ -11,7 +11,7 @@ int main(int argc, char** argv) {
   }
 
   try {
-    double result = InvertedPolish::evaluate(argv[1]);
+    double result = RPN::evaluate(argv[1]);
     std::cout << result << std::endl;
   } catch (const std::exception& e) {
     std::cerr << RED << "Error: " << e.what() << RED << std::endl;

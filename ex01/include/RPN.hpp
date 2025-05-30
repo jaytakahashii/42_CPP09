@@ -4,7 +4,7 @@
 #include <stdexcept>
 #include <string>
 
-class InvertedPolish {
+class RPN {
  public:
   static double evaluate(const std::string& expression);
 
@@ -13,8 +13,8 @@ class InvertedPolish {
   static double applyOperation(double a, double b, const std::string& op);
 
   // === OCF ===
-  InvertedPolish();
-  InvertedPolish(const InvertedPolish&);
-  InvertedPolish& operator=(const InvertedPolish&);
-  InvertedPolish(InvertedPolish&);
+  RPN();
+  RPN(const RPN&);
+  RPN& operator=(const RPN&);
+  RPN(RPN&);
 };
