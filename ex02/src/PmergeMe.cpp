@@ -23,6 +23,7 @@ void PmergeMe::recursiveSort(std::vector<int>& data, size_t left,
     return;
 
   // ペアを作成
+  std::vector<std::pair<int, int> > pairs;
   std::vector<int> bigger, pending;
   for (size_t i = 0; i + 1 < size; i += 2) {
     int a = data[left + i];
@@ -30,9 +31,11 @@ void PmergeMe::recursiveSort(std::vector<int>& data, size_t left,
     if (a > b) {
       bigger.push_back(a);
       pending.push_back(b);
+      pairs.push_back(std::make_pair(a, b));
     } else {
       bigger.push_back(b);
       pending.push_back(a);
+      pairs.push_back(std::make_pair(b, a));
     }
   }
 
@@ -46,8 +49,21 @@ void PmergeMe::recursiveSort(std::vector<int>& data, size_t left,
 
   // sorted に小さい方 pending の1つを先頭に追加
   std::vector<int> sorted;
-  sorted.push_back(pending[0]);  // 一番最初のペアの小さい方
-  pending.erase(pending.begin());
+
+  int anchorPair = 0;
+  for (size_t i = 0; i < pairs.size(); ++i) {
+    if (pairs[i].first == bigger[0]) {
+      anchorPair = pairs[i].second;  // bigger[0]のペア
+      break;
+    }
+  }
+  sorted.push_back(anchorPair);
+
+  std::vector<int>::iterator it =
+      std::find(pending.begin(), pending.end(), sorted[0]);
+  if (it != pending.end()) {
+    pending.erase(it);  // bigger[0]のペアを削除
+  }
 
   // bigger の先頭を sorted に追加（大きい順で既に昇順）
   sorted.insert(sorted.end(), bigger.begin(), bigger.end());
@@ -66,18 +82,20 @@ void PmergeMe::recursiveSort(std::deque<int>& data, size_t left, size_t right) {
   if (size <= 1)
     return;
 
-  std::deque<int> bigger, pending;
-
   // ペアを作成
+  std::deque<std::pair<int, int> > pairs;
+  std::deque<int> bigger, pending;
   for (size_t i = 0; i + 1 < size; i += 2) {
     int a = data[left + i];
     int b = data[left + i + 1];
     if (a > b) {
       bigger.push_back(a);
       pending.push_back(b);
+      pairs.push_back(std::make_pair(a, b));
     } else {
       bigger.push_back(b);
       pending.push_back(a);
+      pairs.push_back(std::make_pair(b, a));
     }
   }
 
@@ -91,8 +109,21 @@ void PmergeMe::recursiveSort(std::deque<int>& data, size_t left, size_t right) {
 
   // sorted に小さい方 pending の1つを先頭に追加
   std::deque<int> sorted;
-  sorted.push_back(pending[0]);  // 一番最初のペアの小さい方
-  pending.pop_front();
+
+  int anchorPair = 0;
+  for (size_t i = 0; i < pairs.size(); ++i) {
+    if (pairs[i].first == bigger[0]) {
+      anchorPair = pairs[i].second;  // bigger[0]のペア
+      break;
+    }
+  }
+  sorted.push_back(anchorPair);
+
+  std::deque<int>::iterator it =
+      std::find(pending.begin(), pending.end(), sorted[0]);
+  if (it != pending.end()) {
+    pending.erase(it);  // bigger[0]のペアを削除
+  }
 
   // bigger の先頭を sorted に追加（大きい順で既に昇順）
   sorted.insert(sorted.end(), bigger.begin(), bigger.end());
@@ -193,6 +224,7 @@ void PmergeMe::recursiveSort_D(std::vector<int>& data, size_t left,
   printContainerSub(data, left, right);
 
   // ステップ 1: ペア分け
+  std::vector<std::pair<int, int> > pairs;
   std::vector<int> bigger, pending;
   for (size_t i = 0; i + 1 < size; i += 2) {
     int a = data[left + i];
@@ -201,14 +233,16 @@ void PmergeMe::recursiveSort_D(std::vector<int>& data, size_t left,
               << "→ ";
     if (a > b) {
       std::cout << "bigger=" << BOLDGREEN << a << RESET << ","
-                << " pending=" << BOLDMAGENTA << b << "\n"
-                << RESET;
+                << " pending=" << BOLDMAGENTA << b << RESET << std::endl;
       bigger.push_back(a);
       pending.push_back(b);
+      pairs.push_back(std::make_pair(a, b));
     } else {
-      std::cout << "bigger=" << b << ", pending=" << a << "\n";
+      std::cout << "bigger=" << BOLDGREEN << b << RESET << ","
+                << " pending=" << BOLDMAGENTA << a << RESET << std::endl;
       bigger.push_back(b);
       pending.push_back(a);
+      pairs.push_back(std::make_pair(b, a));
     }
   }
 
@@ -237,15 +271,32 @@ void PmergeMe::recursiveSort_D(std::vector<int>& data, size_t left,
   printContainer(pending);
   std::cout << RESET;
   std::vector<int> sorted;
-  std::cout << " initial sorted: " << BOLDMAGENTA << "pending[" << RESET << "0"
-            << BOLDMAGENTA << "] = " << pending[0] << RESET
+
+  int anchorPair = 0;
+  for (size_t i = 0; i < pairs.size(); ++i) {
+    if (pairs[i].first == bigger[0]) {
+      anchorPair = pairs[i].second;  // bigger[0]のペア
+      break;
+    }
+  }
+
+  std::cout << " initial sorted: " << BOLDMAGENTA << "pairs bigger[0]("
+            << bigger[0] << "): " << anchorPair << RESET
             << " → insert at sorted[0]" << std::endl;
-  sorted.push_back(pending[0]);
-  pending.erase(pending.begin());
+  sorted.push_back(anchorPair);
+
+  std::vector<int>::iterator it =
+      std::find(pending.begin(), pending.end(), anchorPair);
+  if (it != pending.end()) {
+    pending.erase(it);  // 一番最初のペアの小さい方を削除
+  }
 
   sorted.insert(sorted.end(), bigger.begin(), bigger.end());
-  std::cout << BOLDGREEN << " bigger(sorted):  ";
+  std::cout << BOLDGREEN << " bigger(sorted): ";
   printContainer(sorted);
+  std::cout << RESET;
+  std::cout << BOLDMAGENTA << " pending:        ";
+  printContainer(pending);
   std::cout << RESET;
 
   // ステップ 4: pending を Jacobsthal 順で挿入
@@ -277,10 +328,10 @@ void PmergeMe::insertPending_D(std::vector<int>& sorted,
   std::cout << RESET << std::endl;
 
   for (size_t idx = 0; idx < jacobIndices.size(); ++idx) {
-    if (idx >= n)
+    if (jacobIndices[idx] >= n)
       break;
-    used[idx] = true;
-    int value = pend[idx];
+    used[jacobIndices[idx]] = true;
+    int value = pend[jacobIndices[idx]];
     std::vector<int>::iterator pos =
         std::lower_bound(sorted.begin(), sorted.end(), value);
     std::cout << "  insert " << value << " at position "
