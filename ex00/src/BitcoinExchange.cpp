@@ -107,13 +107,12 @@ bool BitcoinExchange::_parseLine(const std::string& line, BitcoinData& data) {
     return false;
   }
 
-  // 日付部分と値部分を明示的に取得
-  std::string datePart = line.substr(0, validBeforeSpacePos);
-  std::string spaceBefore = line.substr(validBeforeSpacePos, 1);
-  std::string spaceAfter = line.substr(validAfterSpacePos, 1);
-  std::string valuePart = line.substr(validValuePos);
+  std::string datePart = line.substr(0, validBeforeSpacePos);     // date
+  std::string spaceBefore = line.substr(validBeforeSpacePos, 1);  // space
+  std::string spaceAfter = line.substr(validAfterSpacePos, 1);    // space
+  std::string valuePart = line.substr(validValuePos);             // value
 
-  // pipeの前後に空白があるか確認
+  // check spaces before and after the pipe
   if (spaceBefore != " " || spaceAfter != " ") {
     std::cout << "Error: bad input => '" << line << "'" << std::endl;
     return false;
@@ -134,38 +133,37 @@ bool BitcoinExchange::_parseLine(const std::string& line, BitcoinData& data) {
   return true;
 }
 
-// 日付形式チェック + うるう年対応
 bool BitcoinExchange::_isValidDate(const std::string& date) {
   if (date.empty() || date.length() != 10 || date[4] != '-' || date[7] != '-')
     return false;
 
-  // 年月日の部分が数字であることを確認
+  // check if the date part is numeric except for the hyphens
   for (size_t i = 0; i < date.length(); ++i) {
     if (i == 4 || i == 7)
-      continue;  // ハイフンはスキップ
+      continue;  // skip hyphens
     if (!std::isdigit(date[i])) {
       return false;
     }
   }
 
-  // 年月日の部分を整数に変換
-  int y = std::atoi(date.substr(0, 4).c_str());
-  int m = std::atoi(date.substr(5, 2).c_str());
-  int d = std::atoi(date.substr(8, 2).c_str());
+  // convert year, month, day parts to integers
+  int year = std::atoi(date.substr(0, 4).c_str());
+  int month = std::atoi(date.substr(5, 2).c_str());
+  int day = std::atoi(date.substr(8, 2).c_str());
 
-  if (y < 0 || m < 1 || m > 12 || d < 1)
+  if (year < 0 || month < 1 || month > 12 || day < 1)
     return false;
 
-  const int daysInMonth[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+  const int daysInMonth[12] = {31, 28, 31, 30, 31, 30,
+                               31, 31, 30, 31, 30, 31};  // days in each month
 
-  int maxDay = daysInMonth[m - 1];
-  if (m == 2 && _isLeapYear(y))
+  int maxDay = daysInMonth[month - 1];
+  if (month == 2 && _isLeapYear(year))
     maxDay = 29;
 
-  return d <= maxDay;
+  return day <= maxDay;
 }
 
-// うるう年判定
 bool BitcoinExchange::_isLeapYear(int year) {
   if (year % 4 != 0)
     return false;
@@ -174,7 +172,6 @@ bool BitcoinExchange::_isLeapYear(int year) {
   return (year % 400 == 0);
 }
 
-// 値のバリデーション
 bool BitcoinExchange::_isValidValue(const std::string& valueStr, float& value) {
   if (valueStr.empty()) {
     std::cout << "Error: empty value." << std::endl;
