@@ -22,7 +22,7 @@ void PmergeMe::recursiveSort(std::vector<int>& data, size_t left,
   if (size <= 1)
     return;
 
-  // ペアを作成
+  // create pairs
   std::vector<std::pair<int, int> > pairs;
   std::vector<int> bigger, pending;
   for (size_t i = 0; i + 1 < size; i += 2) {
@@ -39,39 +39,40 @@ void PmergeMe::recursiveSort(std::vector<int>& data, size_t left,
     }
   }
 
-  // 奇数個の場合は最後の1要素を pending に
+  // odd number of elements
   if (size % 2 != 0) {
     pending.push_back(data[left + size - 1]);
   }
 
-  // bigger を再帰的にソート
+  // sort bigger recursively
   recursiveSort(bigger, 0, bigger.size());
 
-  // sorted に小さい方 pending の1つを先頭に追加
   std::vector<int> sorted;
 
+  // insert the smaller one of the first pair into sorted
   int anchorPair = 0;
   for (size_t i = 0; i < pairs.size(); ++i) {
     if (pairs[i].first == bigger[0]) {
-      anchorPair = pairs[i].second;  // bigger[0]のペア
+      anchorPair = pairs[i].second;  // pair of bigger[0]
       break;
     }
   }
   sorted.push_back(anchorPair);
 
+  // remove the pair of bigger[0] from pending
   std::vector<int>::iterator it =
       std::find(pending.begin(), pending.end(), sorted[0]);
   if (it != pending.end()) {
-    pending.erase(it);  // bigger[0]のペアを削除
+    pending.erase(it);
   }
 
-  // bigger の先頭を sorted に追加（大きい順で既に昇順）
+  // add the bigger's element to sorted
   sorted.insert(sorted.end(), bigger.begin(), bigger.end());
 
-  // pending の残りを Jacobsthal 数列順で挿入
+  // insert the remaining pending elements in Jacobsthal order
   insertPending(sorted, pending);
 
-  // data に結果を書き戻す
+  // write back to data
   for (size_t i = 0; i < sorted.size(); ++i) {
     data[left + i] = sorted[i];
   }
@@ -82,7 +83,6 @@ void PmergeMe::recursiveSort(std::deque<int>& data, size_t left, size_t right) {
   if (size <= 1)
     return;
 
-  // ペアを作成
   std::deque<std::pair<int, int> > pairs;
   std::deque<int> bigger, pending;
   for (size_t i = 0; i + 1 < size; i += 2) {
@@ -99,15 +99,12 @@ void PmergeMe::recursiveSort(std::deque<int>& data, size_t left, size_t right) {
     }
   }
 
-  // 奇数個の場合は最後の1要素を pending に
   if (size % 2 != 0) {
     pending.push_back(data[left + size - 1]);
   }
 
-  // bigger を再帰的にソート
   recursiveSort(bigger, 0, bigger.size());
 
-  // sorted に小さい方 pending の1つを先頭に追加
   std::deque<int> sorted;
 
   int anchorPair = 0;
@@ -122,16 +119,13 @@ void PmergeMe::recursiveSort(std::deque<int>& data, size_t left, size_t right) {
   std::deque<int>::iterator it =
       std::find(pending.begin(), pending.end(), sorted[0]);
   if (it != pending.end()) {
-    pending.erase(it);  // bigger[0]のペアを削除
+    pending.erase(it);
   }
 
-  // bigger の先頭を sorted に追加（大きい順で既に昇順）
   sorted.insert(sorted.end(), bigger.begin(), bigger.end());
 
-  // pending の残りを Jacobsthal 数列順で挿入
   insertPending(sorted, pending);
 
-  // data に結果を書き戻す
   for (size_t i = 0; i < sorted.size(); ++i) {
     data[left + i] = sorted[i];
   }
@@ -143,16 +137,16 @@ void PmergeMe::insertPending(std::vector<int>& sorted,
   std::vector<size_t> jacobIndices = getJacobsthalIndices(n);
 
   std::vector<bool> used(n, false);
-  for (size_t i = 0; i < jacobIndices.size(); ++i) {
-    if (i >= n)
+  for (size_t idx = 0; idx < jacobIndices.size(); ++idx) {
+    if (idx >= n)
       break;
-    used[i] = true;
+    used[idx] = true;
     std::vector<int>::iterator pos =
-        std::lower_bound(sorted.begin(), sorted.end(), pend[i]);
-    sorted.insert(pos, pend[i]);
+        std::lower_bound(sorted.begin(), sorted.end(), pend[idx]);
+    sorted.insert(pos, pend[idx]);
   }
 
-  // 未使用のインデックスを逆順に処理
+  // insert remaining elements in reverse order
   for (int i = static_cast<int>(n) - 1; i >= 0; --i) {
     if (!used[i]) {
       std::vector<int>::iterator pos =
@@ -178,7 +172,6 @@ void PmergeMe::insertPending(std::deque<int>& sorted,
     sorted.insert(pos, pend[jacobIndices[idx]]);
   }
 
-  // 未使用のインデックスを逆順に挿入
   for (int idx = static_cast<int>(n) - 1; idx >= 0; --idx) {
     if (!used[idx]) {
       int value = pend[idx];
@@ -211,7 +204,6 @@ void PmergeMe::sortVector_D(std::vector<int>& data) {
   recursiveSort_D(data, 0, data.size());
 }
 
-// 再帰的に sort
 void PmergeMe::recursiveSort_D(std::vector<int>& data, size_t left,
                                size_t right) {
   size_t size = right - left;
@@ -223,7 +215,7 @@ void PmergeMe::recursiveSort_D(std::vector<int>& data, size_t left,
             << std::endl;
   printContainerSub(data, left, right);
 
-  // ステップ 1: ペア分け
+  // Step 1: create pairs
   std::vector<std::pair<int, int> > pairs;
   std::vector<int> bigger, pending;
   for (size_t i = 0; i + 1 < size; i += 2) {
@@ -246,14 +238,14 @@ void PmergeMe::recursiveSort_D(std::vector<int>& data, size_t left,
     }
   }
 
-  // 奇数個の場合
+  // odd number of elements
   if (size % 2 != 0) {
     std::cout << " unpaired: " << BOLDMAGENTA << data[left + size - 1]
               << " → pending" << RESET << std::endl;
     pending.push_back(data[left + size - 1]);
   }
 
-  // ステップ 2: bigger をソート
+  // Step 2: sort bigger recursively
   std::cout << BOLDGREEN << " bigger:  ";
   printContainer(bigger);
   std::cout << RESET;
@@ -262,7 +254,7 @@ void PmergeMe::recursiveSort_D(std::vector<int>& data, size_t left,
   std::cout << RESET;
   recursiveSort_D(bigger, 0, bigger.size());
 
-  // ステップ 3: sorted の初期化
+  // Step 3: insert the first pair's smaller element into sorted
   std::cout << BOLDWHITE << "\n [Start Insertion] " << RESET << std::endl;
   std::cout << BOLDGREEN << " now bigger:  ";
   printContainer(bigger);
@@ -288,7 +280,7 @@ void PmergeMe::recursiveSort_D(std::vector<int>& data, size_t left,
   std::vector<int>::iterator it =
       std::find(pending.begin(), pending.end(), anchorPair);
   if (it != pending.end()) {
-    pending.erase(it);  // 一番最初のペアの小さい方を削除
+    pending.erase(it);
   }
 
   sorted.insert(sorted.end(), bigger.begin(), bigger.end());
@@ -299,10 +291,10 @@ void PmergeMe::recursiveSort_D(std::vector<int>& data, size_t left,
   printContainer(pending);
   std::cout << RESET;
 
-  // ステップ 4: pending を Jacobsthal 順で挿入
+  // Step 4: insert the remaining pending elements in Jacobsthal order
   insertPending_D(sorted, pending);
 
-  // 書き戻し
+  // write back to data
   for (size_t i = 0; i < sorted.size(); ++i) {
     data[left + i] = sorted[i];
   }
@@ -340,7 +332,6 @@ void PmergeMe::insertPending_D(std::vector<int>& sorted,
     sorted.insert(pos, value);
   }
 
-  // 残りを逆順で挿入
   for (int idx = static_cast<int>(n) - 1; idx >= 0; --idx) {
     if (!used[idx]) {
       int value = pend[idx];
