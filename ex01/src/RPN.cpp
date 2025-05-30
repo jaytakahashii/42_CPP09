@@ -1,35 +1,8 @@
+#include "RPN.hpp"
+
 #include <cstdlib>
 #include <limits>
 #include <sstream>
-
-#include "RPN.hpp"
-
-bool RPN::isOperator(const std::string& token) {
-  return token == "+" || token == "-" || token == "*" || token == "/";
-}
-
-double RPN::applyOperation(double a, double b, const std::string& op) {
-  double answer = 0.0;
-  if (op == "+") {
-    answer = a + b;
-  } else if (op == "-") {
-    answer = a - b;
-  } else if (op == "*") {
-    answer = a * b;
-  } else if (op == "/") {
-    if (b == 0.0)
-      throw std::overflow_error("Division by zero");
-    answer = a / b;
-  } else {
-    throw std::invalid_argument("Unknown operator: " + op);
-  }
-
-  if (std::isnan(answer) || std::isinf(answer)) {
-    throw std::overflow_error("Result out of range");
-  }
-
-  return answer;
-}
 
 double RPN::evaluate(const std::string& expression) {
   std::stack<double> stack;
@@ -58,4 +31,31 @@ double RPN::evaluate(const std::string& expression) {
     throw std::runtime_error("Invalid expression: too many operands");
 
   return stack.top();
+}
+
+bool RPN::isOperator(const std::string& token) {
+  return token == "+" || token == "-" || token == "*" || token == "/";
+}
+
+double RPN::applyOperation(double a, double b, const std::string& op) {
+  double answer = 0.0;
+  if (op == "+") {
+    answer = a + b;
+  } else if (op == "-") {
+    answer = a - b;
+  } else if (op == "*") {
+    answer = a * b;
+  } else if (op == "/") {
+    if (b == 0.0)
+      throw std::overflow_error("Division by zero");
+    answer = a / b;
+  } else {
+    throw std::invalid_argument("Unknown operator: " + op);
+  }
+
+  if (std::isnan(answer) || std::isinf(answer)) {
+    throw std::overflow_error("Result out of range");
+  }
+
+  return answer;
 }
