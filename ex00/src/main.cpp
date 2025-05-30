@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "BitcoinValue.hpp"
+#include "BitcoinExchange.hpp"
 #include "color.hpp"
 
 #define DATA_FILE "data/data.csv"
@@ -13,7 +13,7 @@ int main(int argc, char** argv) {
 
   try {
     std::string inputFile = argv[1];
-    BitcoinValue::bitcoinExchange(inputFile, DATA_FILE);
+    BitcoinExchange::bitcoinExchange(inputFile, DATA_FILE);
   } catch (const std::runtime_error& e) {
     std::cerr << RED "Error: " << e.what() << RESET << std::endl;
     return EXIT_FAILURE;

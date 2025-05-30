@@ -1,20 +1,23 @@
 #pragma once
 
+#include <map>
 #include <string>
-
-#include "BitcoinRate.hpp"
 
 struct BitcoinData {
   std::string date;
   float value;
 };
 
-class BitcoinValue {
+class BitcoinExchange {
  private:
   // === Private Methods ===
 
+  static void _loadRateDB(const std::string&, std::map<std::string, float>&);
+  static bool _hasClosestRate(const std::map<std::string, float>&,
+                              const std::string&, float&);
   static bool _isValidInputHeader(const std::string&);
-  static void _calculateAndPrint(std::ifstream&, const BitcoinRate&);
+  static void _calculateAndPrint(std::ifstream&,
+                                 const std::map<std::string, float>&);
   static bool _parseLine(const std::string&, BitcoinData&);
   static bool _isValidDate(const std::string&);
   static bool _isValidValue(const std::string&, float&);
@@ -22,10 +25,10 @@ class BitcoinValue {
 
   // === OCF (Delete) ===
 
-  BitcoinValue();
-  BitcoinValue(const BitcoinValue&);
-  BitcoinValue& operator=(const BitcoinValue&);
-  ~BitcoinValue();
+  BitcoinExchange();
+  BitcoinExchange(const BitcoinExchange&);
+  BitcoinExchange& operator=(const BitcoinExchange&);
+  ~BitcoinExchange();
 
  public:
   static void bitcoinExchange(const std::string& inputFile,
