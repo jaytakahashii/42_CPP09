@@ -1,5 +1,6 @@
 #include <deque>
 #include <iostream>
+#include <set>
 #include <vector>
 
 #include "PmergeMe.hpp"
@@ -74,6 +75,23 @@ int main(int argc, char** argv) {
 
   std::cout << "Time to process a range of 5 elements with std::deque:   "
             << sortTimeDeque << " us" << std::endl;
+
+  if (__DEBUG__) {
+    std::vector<int> collectVector(vectorNumbers);
+    std::deque<int> collectDeque(dequeNumbers);
+    std::sort(collectVector.begin(), collectVector.end());
+    std::sort(collectDeque.begin(), collectDeque.end());
+    if (collectVector != vectorNumbers) {
+      std::cerr << RED << "Error: vector is not sorted correctly." << RESET
+                << std::endl;
+      return EXIT_FAILURE;
+    }
+    if (collectDeque != dequeNumbers) {
+      std::cerr << RED << "Error: deque is not sorted correctly." << RESET
+                << std::endl;
+      return EXIT_FAILURE;
+    }
+  }
 
   return EXIT_SUCCESS;
 }
