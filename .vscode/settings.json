@@ -47,7 +47,15 @@
     "typeinfo": "cpp",
     "unordered_map": "cpp",
     "variant": "cpp",
-    "*.tpp": "cpp"
+    "*.tpp": "cpp",
+    "__tree": "cpp",
+    "forward_list": "cpp",
+    "fstream": "cpp",
+    "map": "cpp",
+    "set": "cpp",
+    "sstream": "cpp",
+    "complex": "cpp",
+    "iterator": "cpp"
   },
   "cSpell.words": [
     "DEBUGFLAGS",
