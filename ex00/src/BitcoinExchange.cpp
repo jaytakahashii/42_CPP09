@@ -16,7 +16,7 @@
 // === Public Static Method ===
 
 void BitcoinExchange::bitcoinExchange(const std::string& inputFile,
-                                   const std::string& rateDBFile) {
+                                      const std::string& rateDBFile) {
   std::map<std::string, float> rateDB;
   _loadRateDB(rateDBFile, rateDB);
   std::ifstream file(inputFile.c_str());
@@ -36,7 +36,7 @@ void BitcoinExchange::bitcoinExchange(const std::string& inputFile,
 // === Private Methods ===
 
 void BitcoinExchange::_loadRateDB(const std::string& filename,
-                               std::map<std::string, float>& rateMap) {
+                                  std::map<std::string, float>& rateMap) {
   std::ifstream file(filename.c_str());
   if (!file.is_open()) {
     throw std::runtime_error("could not open data file");
@@ -59,8 +59,9 @@ void BitcoinExchange::_loadRateDB(const std::string& filename,
   }
 }
 
-bool BitcoinExchange::_hasClosestRate(const std::map<std::string, float>& rateDB,
-                                   const std::string& date, float& rate) {
+bool BitcoinExchange::_hasClosestRate(
+    const std::map<std::string, float>& rateDB, const std::string& date,
+    float& rate) {
   std::map<std::string, float>::const_iterator it = rateDB.lower_bound(date);
   if (it != rateDB.end() && it->first == date) {
     rate = it->second;
@@ -119,7 +120,7 @@ bool BitcoinExchange::_parseLine(const std::string& line, BitcoinData& data) {
   }
 
   if (!_isValidDate(datePart)) {
-    std::cout << "Error: bad input => '" << line << "'" << std::endl;
+    std::cout << "Error: bad date format => '" << datePart << "'" << std::endl;
     return false;
   }
 
