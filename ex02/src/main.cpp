@@ -60,7 +60,9 @@ int main(int argc, char** argv) {
   double sortTimeVector;
   double sortTimeDeque;
   if (__DEBUG__) {
-    sortTimeVector = measure_us(PmergeMe::sortVector_D, vectorNumbers);
+    std::vector<int> vectorNumbersCopy = vectorNumbers;
+    PmergeMe::sortVector_D(vectorNumbersCopy);
+    sortTimeVector = measure_us(PmergeMe::sortVector, vectorNumbers);
     sortTimeDeque = measure_us(PmergeMe::sortDeque, dequeNumbers);
   } else {
     sortTimeVector = measure_us(PmergeMe::sortVector, vectorNumbers);
@@ -77,19 +79,15 @@ int main(int argc, char** argv) {
             << sortTimeDeque << " us" << std::endl;
 
   if (__DEBUG__) {
-    std::vector<int> collectVector(vectorNumbers);
-    std::deque<int> collectDeque(dequeNumbers);
-    std::sort(collectVector.begin(), collectVector.end());
-    std::sort(collectDeque.begin(), collectDeque.end());
-    if (collectVector != vectorNumbers) {
-      std::cerr << RED << "Error: vector is not sorted correctly." << RESET
-                << std::endl;
-      return EXIT_FAILURE;
+    if (std::is_sorted(vectorNumbers.begin(), vectorNumbers.end())) {
+      std::cout << BOLDGREEN "Vector is sorted correctly." RESET << std::endl;
+    } else {
+      std::cout << RED "Vector is NOT sorted correctly." RESET << std::endl;
     }
-    if (collectDeque != dequeNumbers) {
-      std::cerr << RED << "Error: deque is not sorted correctly." << RESET
-                << std::endl;
-      return EXIT_FAILURE;
+    if (std::is_sorted(dequeNumbers.begin(), dequeNumbers.end())) {
+      std::cout << BOLDGREEN "Deque is sorted correctly." RESET << std::endl;
+    } else {
+      std::cout << RED "Deque is NOT sorted correctly." RESET << std::endl;
     }
   }
 
