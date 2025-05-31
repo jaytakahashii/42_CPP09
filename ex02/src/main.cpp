@@ -1,5 +1,8 @@
+#include <algorithm>
+#include <cstdlib>
 #include <deque>
 #include <iostream>
+#include <limits>
 #include <set>
 #include <vector>
 
@@ -8,13 +11,10 @@
 
 template <typename Func, typename Arg>
 static double measure_us(const Func& func, Arg& arg) {
-  std::chrono::high_resolution_clock::time_point start =
-      std::chrono::high_resolution_clock::now();
+  clock_t start = clock();
   func(arg);
-  std::chrono::high_resolution_clock::time_point end =
-      std::chrono::high_resolution_clock::now();
-  std::chrono::duration<double, std::micro> elapsed = end - start;
-  return elapsed.count();
+  clock_t end = clock();
+  return static_cast<double>(end - start) * 1e6 / CLOCKS_PER_SEC;
 }
 
 static bool isValidArgument(const std::string& arg,
@@ -79,12 +79,16 @@ int main(int argc, char** argv) {
             << sortTimeDeque << " us" << std::endl;
 
   if (__DEBUG__) {
-    if (std::is_sorted(vectorNumbers.begin(), vectorNumbers.end())) {
+    std::vector<int> vectorNumbersCopy = vectorNumbers;
+    std::deque<int> dequeNumbersCopy = dequeNumbers;
+    sort(vectorNumbersCopy.begin(), vectorNumbersCopy.end());
+    sort(dequeNumbersCopy.begin(), dequeNumbersCopy.end());
+    if (vectorNumbers == vectorNumbersCopy) {
       std::cout << BOLDGREEN "Vector is sorted correctly." RESET << std::endl;
     } else {
       std::cout << RED "Vector is NOT sorted correctly." RESET << std::endl;
     }
-    if (std::is_sorted(dequeNumbers.begin(), dequeNumbers.end())) {
+    if (dequeNumbers == dequeNumbersCopy) {
       std::cout << BOLDGREEN "Deque is sorted correctly." RESET << std::endl;
     } else {
       std::cout << RED "Deque is NOT sorted correctly." RESET << std::endl;

@@ -46,13 +46,12 @@ void printContainer(const Container& container) {
   }
   for (typename Container::const_iterator it = container.begin();
        it != container.end(); ++it) {
-    std::cout << *it;
-    if (std::next(it) == container.end()) {
-      std::cout << std::endl;
-    } else {
+    if (it != container.begin()) {
       std::cout << " ";
     }
+    std::cout << *it;
   }
+  std::cout << std::endl;
 }
 
 template <typename Container>

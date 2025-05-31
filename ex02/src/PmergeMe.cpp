@@ -1,5 +1,6 @@
 #include "PmergeMe.hpp"
 
+#include <algorithm>
 #include <iostream>
 
 #include "color.hpp"
