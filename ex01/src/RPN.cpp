@@ -1,5 +1,6 @@
 #include "RPN.hpp"
 
+#include <cmath>
 #include <cstdlib>
 #include <limits>
 #include <sstream>
@@ -22,7 +23,7 @@ double RPN::evaluate(const std::string& expression) {
     } else {
       if (token.length() != 1 || !isdigit(token[0]))
         throw std::runtime_error("Invalid token: " + token);
-      double value = std::stod(token);
+      double value = std::strtod(token.c_str(), NULL);
       stack.push(value);
     }
   }
